@@ -320,8 +320,16 @@ FUNCTION missionValidation {
 	} ELSE {
 		IF NOT success {
 			pushUIMessage( "Partial success.", 3, PRIORITY_HIGH ).
+			IF postlaunch_action = TRUE {
+				WAIT 10. 
+				RUNPATH( postlaunch_task ).
+			}
 		} ELSE {
 			pushUIMessage( "Mission successful!", 3, PRIORITY_HIGH ).
+			IF postlaunch_action = TRUE {
+				WAIT 10. 
+				RUNPATH( postlaunch_task ).
+			}
 		}
 	}
 }
@@ -399,7 +407,8 @@ FUNCTION setSystemEvents {
 	IF timeToLaunch > 3600  { systemEvents:ADD(makeEvent(-3600,"1 hour to launch")). }
 	IF timeToLaunch > 1800  { systemEvents:ADD(makeEvent(-1800,"30 minutes to launch")). }
 	IF timeToLaunch > 600   { systemEvents:ADD(makeEvent(-600,"10 minutes to launch")). }
-	IF timeToLaunch > 300   { systemEvents:ADD(makeEvent(-300,"5 minutes to launch")). }
+	IF timeToLaunch > 360   { IF ADDONS:KAC:AVAILABLE {set na to addAlarm("Raw",time:seconds+timeToLaunch-150, "Test", "Target Plane Launch Window is Near!"). set na:NOTES to "Launch Time".} }
+	IF timeToLaunch > 300   { systemEvents:ADD(makeEvent(-300,"5 minutes to launch")).}
 	IF timeToLaunch > 60    { systemEvents:ADD(makeEvent(-60,"1 minute to launch")). }
 	IF timeToLaunch > 30	{ systemEvents:ADD(makeEvent(-30,"30 seconds to launch")). }
 	systemEvents:ADD(makeEvent(-10,"10 SECONDS TO LAUNCH")).
@@ -694,6 +703,31 @@ FUNCTION userEventHandler {
 		IF NOT sequence[userEventPointer]:HASKEY("message") {
 			sequence[userEventPointer]:ADD("message", "Rolling to " + steeringRoll + " degrees").
 		}
+	}
+	ELSE IF eType = "action" OR eType = "ag" {
+		LOCAL dm IS sequence[userEventPointer]["massLost"].
+		LOCAL agn IS sequence[userEventPointer]["actionGroup"].
+		FROM { LOCAL i IS upfgStage. } UNTIL i = vehicle:LENGTH STEP { SET i TO i+1. } DO {
+			//	Reduce mass of this stage
+			SET vehicle[i]["massTotal"] TO vehicle[i]["massTotal"] - dm.
+			SET vehicle[i]["massDry"] TO vehicle[i]["massDry"] - dm.
+			//	Recalculate burn time of const-acc stages
+			IF vehicle[i]["mode"] = 2 {
+				LOCAL newBurnTime IS constAccBurnTime(vehicle[i]).
+				//	If this stage is not being flown - changing the burn time will suffice
+				IF i <> upfgStage {
+					SET vehicle[i]["maxT"] TO newBurnTime.
+				} ELSE IF i+1 < vehicle:LENGTH {
+					//	Otherwise, we have to increase a delay on the subsequent stage
+					LOCAL addDelay IS newBurnTime - vehicle[i]["maxT"].
+					SET nextStageTime TO nextStageTime + addDelay.
+				}
+			}
+			//	Exit the loop if the subsequent stage separates (either via staging or ignition)
+			IF (i+1 < vehicle:LENGTH) AND (vehicle[i+1]["staging"]["jettison"] OR vehicle[i+1]["staging"]["ignition"]) { BREAK. }
+		}
+		//	Finally, run action group
+		IF agn = 1{TOGGLE AG1.} ELSE IF agn = 2{TOGGLE AG2.} ELSE IF agn = 3{TOGGLE AG3.} ELSE IF agn = 4{TOGGLE AG4.} ELSE IF agn = 5{TOGGLE AG5.} ELSE IF agn = 6{TOGGLE AG6.} ELSE IF agn = 7{TOGGLE AG7.} ELSE IF agn = 8{TOGGLE AG8.} ELSE IF agn = 9{TOGGLE AG9.} ELSE IF agn = 10{TOGGLE AG10.} ELSE {pushUIMessage( "NOTHING TO DO" ).}
 	}
 	ELSE { pushUIMessage( "Unknown event type (" + eType + ", message='" + sequence[userEventPointer]["message"] + "')!", 5, PRIORITY_HIGH ). }
 	//	Print event message, if requested
