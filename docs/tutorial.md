@@ -177,11 +177,11 @@ It defines the target orbit (or, target *state* - nothing stops you from perform
 PEGAS supports launches to orbits defined by a reference body (selecting target in the universe map).
 However, this way you can only define the target **orbital plane** - apoapse and periapse still need to be entered by variable.
 
-New Function: You can now set up a post launch task script, using the following line
+New Features: You can now set up a post launch task script, using the following line
 * SET postlaunch_task to `TRUE`.
 * SET postlaunch_script to "script_name".`
 
-Also, a Line `RUN pegas.` with preload bootfile can make your launch much easier.
+Also, a line `RUN pegas.` in the end with preload bootfile can make your launch much easier.
 
 Important note: selecting target will only work for bodies orbiting the Earth (or any body that you're launching from\*).
 

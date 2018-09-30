@@ -1,5 +1,13 @@
 ### Change log
 
+## [v1.2](https://github.com/Noiredd/PEGAS/releases/tag/v1.2) (2017-11-05)
+Added some requested new features.
+
+##### Features:
+* Action Group execution via user events,
+* Automatic add launch time alarm when Kerbal Alarm Clock (https://github.com/TriggerAu/KerbalAlarmClock/releases) is installed,
+* Set up a post launch script is now possible.
+
 ## [v1.1](https://github.com/Noiredd/PEGAS/releases/tag/v1.1) (2017-11-05)
 Multiple fixes for bugs identified after the initial release and new features requested since.
 
