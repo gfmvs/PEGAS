@@ -1,6 +1,6 @@
 ### Change log
 
-## [v1.2](https://github.com/Noiredd/PEGAS/releases/tag/v1.2) (2017-11-05)
+## [v1.2](https://github.com/gfmvs/PEGAS/releases/tag/v1.2) (2018-09-30)
 Added some requested new features.
 
 ##### Features:
