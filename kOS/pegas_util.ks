@@ -320,15 +320,15 @@ FUNCTION missionValidation {
 	} ELSE {
 		IF NOT success {
 			pushUIMessage( "Partial success.", 3, PRIORITY_HIGH ).
-			IF postlaunch_action = TRUE {
+			IF postlaunch_task = TRUE {
 				WAIT 10. 
-				RUNPATH( postlaunch_task ).
+				RUNPATH( postlaunch_script ).
 			}
 		} ELSE {
 			pushUIMessage( "Mission successful!", 3, PRIORITY_HIGH ).
-			IF postlaunch_action = TRUE {
+			IF postlaunch_task = TRUE {
 				WAIT 10. 
-				RUNPATH( postlaunch_task ).
+				RUNPATH( postlaunch_script ).
 			}
 		}
 	}

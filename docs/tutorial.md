@@ -157,6 +157,7 @@ This is how you control timed events, like:
 * jettisoning the payload fairing,
 * rolling to given attitude,
 * throttle (only in the atmospheric ascent phase)\*.
+* execute action group.
 
 See the reference to all possible events and how to use them.  
 As you see, both `sequence` and `vehicle` can cause a staging (equivalent to hitting spacebar).
@@ -176,6 +177,12 @@ It defines the target orbit (or, target *state* - nothing stops you from perform
 PEGAS supports launches to orbits defined by a reference body (selecting target in the universe map).
 However, this way you can only define the target **orbital plane** - apoapse and periapse still need to be entered by variable.
 
+New Function: You can now set up a post launch task script, using the following line
+* SET postlaunch_task to `TRUE`.
+* SET postlaunch_script to "script_name".`
+
+Also, a Line `RUN pegas.` with preload bootfile can make your launch much easier.
+
 Important note: selecting target will only work for bodies orbiting the Earth (or any body that you're launching from\*).
 
 \* - none tested except Kerbin and Earth.
@@ -192,6 +199,8 @@ Those steps get your vehicle ready (you may enclose them in a single script and 
 4. Now the only thing you need to do is specify where you want it to go: define your `mission`.
 5. When in kOS terminal, load those 4 variables (boot files or by simply running scripts).
 6. `RUN pegas.`
+
+\* - If you have Kerbal Alarm Clock installed, kOS will automatically add a new alarm when estimated launch time is over 6 minute away.
 
 If something is going wrong mid-flight, you can use the standard action group `ABORT` to make PEGAS relinquish all control and exit.
 
