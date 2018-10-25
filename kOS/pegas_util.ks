@@ -320,15 +320,15 @@ FUNCTION missionValidation {
 	} ELSE {
 		IF NOT success {
 			pushUIMessage( "Partial success.", 3, PRIORITY_HIGH ).
-			IF postlaunch_task = TRUE {
+			IF postlaunch_action = TRUE {
 				WAIT 10. 
-				RUNPATH( postlaunch_script ).
+				RUNPATH( postlaunch_task ).
 			}
 		} ELSE {
 			pushUIMessage( "Mission successful!", 3, PRIORITY_HIGH ).
-			IF postlaunch_task = TRUE {
+			IF postlaunch_action = TRUE {
 				WAIT 10. 
-				RUNPATH( postlaunch_script ).
+				RUNPATH( postlaunch_task ).
 			}
 		}
 	}
@@ -705,27 +705,29 @@ FUNCTION userEventHandler {
 		}
 	}
 	ELSE IF eType = "action" OR eType = "ag" {
-		LOCAL dm IS sequence[userEventPointer]["massLost"].
 		LOCAL agn IS sequence[userEventPointer]["actionGroup"].
-		FROM { LOCAL i IS upfgStage. } UNTIL i = vehicle:LENGTH STEP { SET i TO i+1. } DO {
-			//	Reduce mass of this stage
-			SET vehicle[i]["massTotal"] TO vehicle[i]["massTotal"] - dm.
-			SET vehicle[i]["massDry"] TO vehicle[i]["massDry"] - dm.
-			//	Recalculate burn time of const-acc stages
-			IF vehicle[i]["mode"] = 2 {
-				LOCAL newBurnTime IS constAccBurnTime(vehicle[i]).
-				//	If this stage is not being flown - changing the burn time will suffice
-				IF i <> upfgStage {
-					SET vehicle[i]["maxT"] TO newBurnTime.
-				} ELSE IF i+1 < vehicle:LENGTH {
-					//	Otherwise, we have to increase a delay on the subsequent stage
-					LOCAL addDelay IS newBurnTime - vehicle[i]["maxT"].
-					SET nextStageTime TO nextStageTime + addDelay.
+		IF sequence[userEventPointer]:HASKEY("massLost") {
+			LOCAL dm IS sequence[userEventPointer]["massLost"].
+			FROM { LOCAL i IS upfgStage. } UNTIL i = vehicle:LENGTH STEP { SET i TO i+1. } DO {
+				//	Reduce mass of this stage
+				SET vehicle[i]["massTotal"] TO vehicle[i]["massTotal"] - dm.
+				SET vehicle[i]["massDry"] TO vehicle[i]["massDry"] - dm.
+				//	Recalculate burn time of const-acc stages
+				IF vehicle[i]["mode"] = 2 {
+					LOCAL newBurnTime IS constAccBurnTime(vehicle[i]).
+					//	If this stage is not being flown - changing the burn time will suffice
+					IF i <> upfgStage {
+						SET vehicle[i]["maxT"] TO newBurnTime.
+					} ELSE IF i+1 < vehicle:LENGTH {
+						//	Otherwise, we have to increase a delay on the subsequent stage
+						LOCAL addDelay IS newBurnTime - vehicle[i]["maxT"].
+						SET nextStageTime TO nextStageTime + addDelay.
+					}
 				}
+				//	Exit the loop if the subsequent stage separates (either via staging or ignition)
+				IF (i+1 < vehicle:LENGTH) AND (vehicle[i+1]["staging"]["jettison"] OR vehicle[i+1]["staging"]["ignition"]) { BREAK. }
 			}
-			//	Exit the loop if the subsequent stage separates (either via staging or ignition)
-			IF (i+1 < vehicle:LENGTH) AND (vehicle[i+1]["staging"]["jettison"] OR vehicle[i+1]["staging"]["ignition"]) { BREAK. }
-		}
+		}.
 		//	Finally, run action group
 		IF agn = 1{TOGGLE AG1.} ELSE IF agn = 2{TOGGLE AG2.} ELSE IF agn = 3{TOGGLE AG3.} ELSE IF agn = 4{TOGGLE AG4.} ELSE IF agn = 5{TOGGLE AG5.} ELSE IF agn = 6{TOGGLE AG6.} ELSE IF agn = 7{TOGGLE AG7.} ELSE IF agn = 8{TOGGLE AG8.} ELSE IF agn = 9{TOGGLE AG9.} ELSE IF agn = 10{TOGGLE AG10.} ELSE {pushUIMessage( "NOTHING TO DO" ).}
 	}

@@ -1,5 +1,5 @@
 //	Settings for PEGAS
-GLOBAL kOS_IPU IS 500.					//	Required to run the script fast enough.
+GLOBAL kOS_IPU IS 1000.					//	Required to run the script fast enough.
 GLOBAL cserVersion IS "old".			//	Which version of the CSER function to use: "old" for the standard one, "new" for pand5461's implementation.
 										//	"Old" CSER requires IPU of about 500, while "new" has not been extensively tested yet.
 GLOBAL pitchOverTimeLimit IS 20.		//	In atmospheric part of ascent, when the vehicle pitches over, the wait for velocity vector to align will be forcibly broken after that many seconds.
