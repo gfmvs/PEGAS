@@ -25,6 +25,7 @@ FUNCTION createUI {
 	PRINT "| T   h  m  s |                           |".
 	PRINT "|-----------------------------------------|".
 	PRINT "|                                         |".
+	PRINT "|                                         |".
 	PRINT "|-----------------------------------------|".
 	PRINT "| Stage:                          (    s) |".
 	PRINT "| UPFG status  =                          |".
@@ -44,7 +45,8 @@ FUNCTION createUI {
 	PRINT "|                                         |".
 	PRINT "*-----------------------------------------*".
 	
-	textPrint(SHIP:NAME, 6, 2, 41, "L").
+	textPrint("Mission: " + SHIP:NAME, 6, 2, 41, "L").
+	textPrint("Vehicle: " + vehicleinfo["launchVehicleName"], 7, 2, 41, "L").
 	refreshUI().
 }
 
@@ -124,11 +126,11 @@ FUNCTION refreshUI {
 	LOCAL currentTime IS timePrint().
 	
 	//	Section offsets, for easier extendability
-	LOCAL vehicleInfoOffset IS 8.	//	Reads: vehicle info section starts at row 8
-	LOCAL orbitalInfoOffset IS 14.
+	LOCAL vehicleInfoOffset IS 9.	//	Reads: vehicle info section starts at row 8
+	LOCAL orbitalInfoOffset IS 15.
 	LOCAL currentOrbitOffset IS 15.	//	Horizontal offset for the current orbit info
 	LOCAL targetOrbitOffset IS 29.	//	Horizontal offset for the target orbit info
-	LOCAL messageBoxOffset IS 23.
+	LOCAL messageBoxOffset IS 24.
 	
 	//	First figure out what phase of the flight are we in: passively or actively guided.
 	IF NOT (DEFINED upfgInternal) {

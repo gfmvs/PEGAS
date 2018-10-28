@@ -167,7 +167,7 @@ UNTIL ABORT {
 	LOCAL finalizeDT IS TIME:SECONDS - previousTime.
 	SET previousTime TO TIME:SECONDS.
 	SET upfgInternal["tgo"] TO upfgInternal["tgo"] - finalizeDT.
-	IF upfgInternal["tgo"] < finalizeDT { BREAK. }	//	Exit loop before entering the next refresh cycle
+	IF upfgInternal["tgo"] < finalizeDT + finalCutOffAdvanceTime { BREAK. }	//	Exit loop before entering the next refresh cycle
 													//	We could have done "tgo < 0" but this would mean that the previous loop tgo was 0.01 yet we still didn't break
 	refreshUI().
 	WAIT 0.
@@ -178,6 +178,6 @@ UNTIL ABORT {
 UNLOCK STEERING.
 UNLOCK THROTTLE.
 SET SHIP:CONTROL:PILOTMAINTHROTTLE TO 0.
-WAIT 0.
+WAIT 1.
 missionValidation().
 refreshUI().

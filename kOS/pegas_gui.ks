@@ -6,6 +6,16 @@ set pages_g1:x to 490. //window start position
 set pages_g1:y to 90.
 
 //STYLE Setting
+// set pages_g1:skin:toggle:on:textcolor to rgb(0.5,1,0).
+// set pages_g1:skin:toggle:hover_on:textcolor to pages_g1:skin:toggle:on:textcolor.
+// set pages_g1:skin:toggle:height to 20.
+// set pages_g1:skin:toggle:padding:left to 32.
+// set pages_g1:skin:toggle:bg to "gui/toggle_off.png".
+// set pages_g1:skin:toggle:hover:bg to "gui/toggle_off_hover.png".
+// set pages_g1:skin:toggle:on:bg to "gui/toggle_on.png".
+// set pages_g1:skin:toggle:hover_on:bg to "gui/toggle_on_hover.png".
+// set pages_g1:skin:toggle:active_on:bg to "gui/toggle_mid.png".
+// set pages_g1:skin:toggle:active:bg to "gui/toggle_mid.png".
 
 //Mission Setting Start
 LOCAL label IS pages_g1:ADDLABEL("Mission Parameters").
@@ -19,7 +29,7 @@ LOCAL box1 IS pages_g1:ADDHLAYOUT().
 	LOCAL MPL_V IS box1:ADDTEXTFIELD("").
 	if vehicleinfo:HASKEY("vehicleInitialMass") {
 		Set autoPayload to SHIP:MASS*1000 - vehicleinfo["vehicleInitialMass"].
-		Set autoPayload to ROUND(autoPayload,1).
+		Set autoPayload to ROUND(autoPayload,0).
 		Set MPL_V:TEXT to autoPayload:TOSTRING.
 	}.
 	set MPL_V:style:width to 115.
@@ -234,9 +244,18 @@ set adctrl:style:PADDING:LEFT to 5.
 			if val > 360 set IRA_V:TEXT to "360".
 		}.
 	LOCAL adctrl_7 TO adctrl:ADDHLAYOUT().
-		LOCAL confirmADC TO adctrl_7:ADDBUTTON("Confirm Controls").
+		LOCAL AAA_1 IS adctrl_7:addcheckbox("Achieve orbit Before Apoapsis",false).
+		Set AAA_1:TOOLTIP to "Achieve an elliptical orbit after apoapsis, useful to low TWR second stage launch vehicle.".
+		set AAA_1:style:width to 225.
+		set AAA_1:ONCLICK to
+		{ 
+			if AAA_1:PRESSED = TRUE {set AAA_1:TEXT to "Achieve orbit After Apoapsis".}.
+			if AAA_1:PRESSED = FALSE {set AAA_1:TEXT to "Achieve orbit Before Apoapsis".}.
+		}.
+	LOCAL adctrl_8 TO adctrl:ADDHLAYOUT().
+		LOCAL confirmADC TO adctrl_8:ADDBUTTON("Confirm Controls").
 		set confirmADC:style:width to 115.
-		LOCAL resetADC TO adctrl_7:ADDBUTTON("Reset").
+		LOCAL resetADC TO adctrl_8:ADDBUTTON("Reset").
 		set resetADC:style:width to 110.
 //Advance Controls End
 
@@ -309,9 +328,11 @@ function ClickStart
 		"direction", DIR_V:VALUE
 	).
 	if MPL_V:TEXT <> "" {SET mission["payload"] TO MPL_V:TEXT:tonumber().}.
-	if MAD_V:TEXT <> "" {SET mission["altitude"] TO MAP_V:TEXT:tonumber().}.
+	if MAD_V:TEXT <> "" {SET mission["altitude"] TO MAD_V:TEXT:tonumber().}.
 	if INC_V:TEXT <> "" {SET mission["inclination"] TO INC_V:TEXT:tonumber().}.
 	if LAN_V:TEXT <> "" {SET mission["LAN"] TO LAN_V:TEXT:tonumber().}.
+	if AAA_1:PRESSED = TRUE {SET mission["AOAAP"] TO TRUE.}
+	else {SET mission["AOAAP"] TO FALSE.}.
 	IF POS_V:TEXT = ""
 	{
 		SET postlaunch_action to FALSE.
@@ -328,7 +349,7 @@ function ClickStart
 //Set Button Function End
 
 //Final Action
-ON AG9 {gui_pegas:SHOW().}
+ON AG9 {pages_g1:SHOW().}
 wait until gui_pegas.
 pages_g1:dispose().
 RUN pegas.

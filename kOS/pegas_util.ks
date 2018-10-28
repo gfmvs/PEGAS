@@ -149,6 +149,7 @@ FUNCTION targetSetup {
 	LOCAL srm IS pe * vpe.								//	specific relative angular momentum
 	LOCAL targetVelocity IS SQRT(SHIP:BODY:MU * (2/targetAltitude - 1/sma)).
 	LOCAL flightPathAngle IS ARCCOS( srm/(targetVelocity*targetAltitude) ).
+	IF mission["AOAAP"] = TRUE {SET flightPathAngle TO 0 - flightPathAngle.}.
 	
 	RETURN LEXICON(
 				"radius", targetAltitude,
