@@ -3,14 +3,13 @@ GLOBAL vehicle IS LIST
 	LEXICON
 	(
 		"name", "Stage Two",
-		"massTotal", 174003,
-		"massDry", 39184,
-		"gLim", 1.5,
+		"massTotal", 151263,
+		"massDry", 16445,
+		"gLim", 2.5,
 		"engines", LIST(LEXICON("isp", 448, "thrust", 1310000)),
 		"staging", LEXICON
 		(
-			"jettison", TRUE,
-			"waitBeforeJettison", 0.5,
+			"jettison", FALSE,
 			"ignition", TRUE,
 			"waitBeforeIgnition", 2.5,
 			"ullage", "none"
@@ -19,23 +18,23 @@ GLOBAL vehicle IS LIST
 ).
 GLOBAL sequence IS LIST
 (
-	LEXICON("time", -10, "type", "stage", "message", "Retract Crew Arm"),
 	LEXICON("time", -7, "type", "stage", "message", "Disconnect Fuel Line"),
 	LEXICON("time", 0, "type", "stage", "message", "ignition And LIFTOFF"),
 	LEXICON("time", 10, "type", "roll", "angle", 0),
-	LEXICON("time", 155, "type", "action", "message", "LES jettison", "massLost", 3200, "actionGroup", "1")
+	LEXICON("time", 130, "type", "stage", "message", "First Stage Separation"),
+	LEXICON("time", 160, "type", "jettison", "message", "LES jettison", "massLost", 4588)
 ).
 GLOBAL controls IS LEXICON
 (
-	"launchTimeAdvance", 150,
+	"launchTimeAdvance", 180,
 	"verticalAscentTime", 7,
 	"pitchOverAngle", 6,
-	"upfgActivation", 130
+	"upfgActivation", 136
 ).
 GLOBAL vehicleinfo IS LEXICON
 (
 	"launchVehicleName", "Ares I",
-	"vehicleInitialMass", 872561
+	"vehicleInitialMass", 847188
 ).
 SET STEERINGMANAGER:ROLLTS TO 10.
 SWITCH TO 0.
